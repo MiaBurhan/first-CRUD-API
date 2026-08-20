@@ -1,7 +1,11 @@
 from fastapi import FastAPI, HTTPException, Response
 from pydantic import BaseModel
 
-app = FastAPI()
+app = FastAPI(
+    title="Task API",
+    description="A simple API for managing tasks.",
+    version="1.0"
+)
 
 tasks = []
 
@@ -15,7 +19,11 @@ class TaskUpdate(BaseModel):
     done: bool | None = None
 
 
-@app.get("/")
+@app.get(
+    "/",
+    summary="Get API information",
+    description="Returns information about the Task API."
+)
 def root():
     return {
         "name": "Task API",
@@ -24,19 +32,30 @@ def root():
     }
 
 
-@app.get("/health")
+@app.get(
+    "/health",
+    summary="Check API health",
+    description="Returns OK when the server is running."
+)
 def health():
-    return {
-        "status": "ok"
-    }
+    return {"status": "ok"}
 
 
-@app.get("/tasks")
+@app.get(
+    "/tasks",
+    summary="List all tasks",
+    description="Returns all tasks."
+)
 def get_tasks():
     return tasks
 
 
-@app.post("/tasks", status_code=201)
+@app.post(
+    "/tasks",
+    status_code=201,
+    summary="Create a task",
+    description="Creates a new task."
+)
 def create_task(task: TaskCreate):
     if task.title is None or not task.title.strip():
         raise HTTPException(
@@ -54,9 +73,12 @@ def create_task(task: TaskCreate):
     return new_task
 
 
-@app.put("/tasks/{task_id}")
+@app.put(
+    "/tasks/{task_id}",
+    summary="Update a task",
+    description="Updates the title and/or completion status of a task."
+)
 def update_task(task_id: int, task: TaskUpdate):
-    # Find the task
     existing_task = None
 
     for item in tasks:
@@ -64,21 +86,18 @@ def update_task(task_id: int, task: TaskUpdate):
             existing_task = item
             break
 
-    # Unknown ID
     if existing_task is None:
         raise HTTPException(
             status_code=404,
             detail="Task not found"
         )
 
-    # Empty body
     if task.title is None and task.done is None:
         raise HTTPException(
             status_code=400,
             detail="Request body cannot be empty"
         )
 
-    # Validate title if provided
     if task.title is not None:
         if not task.title.strip():
             raise HTTPException(
@@ -88,14 +107,18 @@ def update_task(task_id: int, task: TaskUpdate):
 
         existing_task["title"] = task.title.strip()
 
-    # Update done if provided
     if task.done is not None:
         existing_task["done"] = task.done
 
     return existing_task
 
 
-@app.delete("/tasks/{task_id}", status_code=204)
+@app.delete(
+    "/tasks/{task_id}",
+    status_code=204,
+    summary="Delete a task",
+    description="Deletes a task by ID."
+)
 def delete_task(task_id: int):
     for index, task in enumerate(tasks):
         if task["id"] == task_id:
