@@ -7,6 +7,7 @@ A lightweight RESTful API built with FastAPI for managing a simple to-do list wi
 - [Overview](#overview)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
+- [Database](#database)
 - [Installation](#installation)
 - [Running the Application](#running-the-application)
 - [API Endpoints](#api-endpoints)
@@ -20,7 +21,7 @@ A lightweight RESTful API built with FastAPI for managing a simple to-do list wi
 
 ## Overview
 
-This Task API provides a simple interface for managing tasks. Each task has an ID, title, and completion status. The API stores tasks in memory (data resets when the server restarts) and supports all CRUD operations.
+This Task API provides a simple interface for managing tasks. Each task has an ID, title, and completion status. The API uses SQLite for persistent storage and supports all CRUD operations.
 
 ## Features
 
@@ -35,10 +36,30 @@ This Task API provides a simple interface for managing tasks. Each task has an I
 
 ## Tech Stack
 
-- **Python 3.7+**
+- **Python 3.07+**
 - **FastAPI** - Web framework
 - **Pydantic** - Data validation
 - **Uvicorn** - ASGI server
+- **SQLite** - Lightweight persistent database
+
+## Database
+
+SQLite was chosen because it is a lightweight database that:
+
+- Uses a single database file
+- Requires zero separate database-server setup
+- Persists data across server restarts
+
+The database file is `tasks.db`. It is created automatically by the application when needed. The file is usually added to `.gitignore`, so each clone of the project starts with a fresh database instead of sharing another developer's local data.
+
+### Example SQL Query
+
+One example query from Stage 4:
+
+```sql
+-- Replace this with the exact SQL query you actually ran in Stage 4.
+SELECT * FROM tasks;
+```
 
 ## Installation
 
@@ -60,28 +81,31 @@ cd task-api
 python -m venv .venv
 ```
 ```bash
+For linux:  
 source .venv/bin/activate  
-# On Windows: .venv\Scripts\activate
+For Windows:  
+.venv\Scripts\activate
 ```
 
 3. **Install dependencies**
 ```bash
 pip install fastapi uvicorn
 ```
+```bash
+python -m pip install Flask
+```
 
 ## Running the Application
 
-### Development Mode
+### Start the Project
+
+Run this command from the project directory:
+
 ```bash
-uvicorn main:app --reload
+uvicorn main:app --reload --port 8000
 ```
 
 The server will start at: `http://localhost:8000`
-
-### Production Mode
-```bash
-uvicorn main:app --host 0.0.0.0 --port 8000
-```
 
 ### Access the API
 - **Base URL**: `http://localhost:8000`
@@ -208,6 +232,16 @@ DELETE /tasks/3
 
 **Response:** `204 No Content` (no response body)
 
+## Database in DB Browser for SQLite
+
+The SQLite database can be opened in **DB Browser for SQLite** to inspect the `tasks.db` file and its tables.
+
+![Database open in DB Browser for SQLite](task_pic.png)
+
+*Database screenshot: `tasks.db` opened in DB Browser for SQLite.*
+
+> If your screenshot has a different filename, change `task_pic.png` above to match the actual file name in the repository.
+
 ## Swagger UI Documentation
 
 The API comes with automatically generated interactive Swagger UI documentation, making it easy to explore and test all endpoints.
@@ -271,13 +305,14 @@ task-api/
 ├── main.py             # This file handles web stuff
 ├── README.md           # Documentation
 ├── Swagger_UI.png      # Swagger UI screenshot
+├── task_pic.png        # SQLite database screenshot
+├── tasks.db            # SQLite database file (usually git-ignored)
 ├── storage.py          # Place that touches the actual data
 ├── models.py           # Just shapes/definitions
 ```
 
 ## Future Improvements
 
-- Persistent database storage (SQLite, PostgreSQL, MongoDB)
 - User authentication
 - Task filtering and sorting
 - Due dates and priorities
@@ -294,7 +329,6 @@ Contributions are welcome! Please follow these steps:
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## License
+## License  
 
 This project is open source 
----
