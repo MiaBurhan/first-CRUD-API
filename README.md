@@ -73,14 +73,14 @@ pip install fastapi uvicorn
 
 ### Development Mode
 ```bash
-uvicorn index:app --reload
+uvicorn main:app --reload
 ```
 
 The server will start at: `http://localhost:8000`
 
 ### Production Mode
 ```bash
-uvicorn index:app --host 0.0.0.0 --port 8000
+uvicorn main:app --host 0.0.0.0 --port 8000
 ```
 
 ### Access the API
@@ -268,9 +268,11 @@ FastAPI automatically generates interactive API documentation. To test the API:
 
 ```
 task-api/
-├── index.py             # Main application file
+├── main.py             # This file handles web stuff
 ├── README.md           # Documentation
-├── Swagger_UI.png        # Swagger UI screenshot
+├── Swagger_UI.png      # Swagger UI screenshot
+├── storage.py          # Place that touches the actual data
+├── models.py           # Just shapes/definitions
 ```
 
 ## Future Improvements
