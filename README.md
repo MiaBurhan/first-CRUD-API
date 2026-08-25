@@ -57,8 +57,11 @@ cd task-api
 
 2. **Create a virtual environment** (optional but recommended)
 ```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+python -m venv .venv
+```
+```bash
+source .venv/bin/activate  
+# On Windows: .venv\Scripts\activate
 ```
 
 3. **Install dependencies**
@@ -266,15 +269,8 @@ FastAPI automatically generates interactive API documentation. To test the API:
 ```
 task-api/
 ├── index.py             # Main application file
-├── requirements.txt     # Python dependencies
 ├── README.md           # Documentation
-├── screenshots/        # Swagger UI screenshots
-│   ├── swagger-overview.png
-│   ├── swagger-create-task.png
-│   ├── swagger-get-tasks.png
-│   ├── swagger-update-task.png
-│   └── swagger-delete-task.png
-└── .gitignore          # Git ignore file
+├── Swagger_UI.png        # Swagger UI screenshot
 ```
 
 ## Future Improvements
@@ -298,6 +294,5 @@ Contributions are welcome! Please follow these steps:
 
 ## License
 
-This project is open source.
-
+This project is open source 
 ---
