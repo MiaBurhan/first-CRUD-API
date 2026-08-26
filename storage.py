@@ -4,13 +4,17 @@ This file is the ONLY place that touches the actual data.
 Everything about how tasks are stored lives here.
 """
 
-import sqlite3
+import os
+import psycopg
+from dotenv import load_dotenv
 
-DATABASE = "tasks.db"
+load_dotenv()
+
+DATABASE_URL = os.environ["DATABASE_URL"]
 
 
 def get_connection():
-    return sqlite3.connect(DATABASE)
+    return psycopg.connect(DATABASE_URL)
 
 
 def initialize_database():
@@ -23,7 +27,7 @@ def initialize_database():
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS tasks (
-            id INTEGER PRIMARY KEY,
+            id SERIAL PRIMARY KEY,
             title TEXT,
             done BOOLEAN
         )
@@ -34,11 +38,11 @@ def initialize_database():
 
     if count == 0:
         cursor.executemany(
-            "INSERT INTO tasks (title, done) VALUES (?, ?)",
+            "INSERT INTO tasks (title, done) VALUES (%s, %s)",
             [
-                ("Learn SQLite", 0),
-                ("Build the tasks API", 0),
-                ("Test database persistence", 0),
+                ("Learn SQLite", False),
+                ("Build the tasks API", False),
+                ("Test database persistence", False),
             ],
         )
 
@@ -73,7 +77,7 @@ def get_task_by_id(task_id: int):
     cursor = conn.cursor()
 
     cursor.execute(
-        "SELECT * FROM tasks WHERE id = ?",
+        "SELECT * FROM tasks WHERE id = %s",
         (task_id,),
     )
 
@@ -96,11 +100,11 @@ def create_task(title: str):
     cursor = conn.cursor()
 
     cursor.execute(
-        "INSERT INTO tasks (title, done) VALUES (?, ?)",
-        (title, 0),
+        "INSERT INTO tasks (title, done) VALUES (%s, %s) RETURNING id",
+        (title, False),
     )
 
-    task_id = cursor.lastrowid
+    task_id = cursor.fetchone()[0]
 
     conn.commit()
     conn.close()
@@ -120,7 +124,7 @@ def update_task(task_id: int, title: str, done: bool):
     cursor = conn.cursor()
 
     cursor.execute(
-        "UPDATE tasks SET title = ?, done = ? WHERE id = ?",
+        "UPDATE tasks SET title = %s, done = %s WHERE id = %s",
         (title, done, task_id),
     )
 
@@ -143,7 +147,7 @@ def delete_task(task_id: int):
     cursor = conn.cursor()
 
     cursor.execute(
-        "DELETE FROM tasks WHERE id = ?",
+        "DELETE FROM tasks WHERE id = %s",
         (task_id,),
     )
 
