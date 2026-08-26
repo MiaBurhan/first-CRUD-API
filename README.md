@@ -169,7 +169,7 @@ curl -i -X DELETE http://localhost:8000/tasks/1
 
 Replace `1` with whatever real id you're testing against — always check with **GET all** first to confirm it exists.
 ## New Database example by psql
-![alt text](psql_db_pic-1.png)
+![psql](psql_db_pic.png)
 **How to get the database by psql**
 ```bash
 docker compose exec db psql -U postgres -d tasks
