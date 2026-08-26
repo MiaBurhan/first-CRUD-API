@@ -170,6 +170,7 @@ curl -i -X DELETE http://localhost:8000/tasks/1
 Replace `1` with whatever real id you're testing against — always check with **GET all** first to confirm it exists.
 ## New Database example by psql
 ![psql](psql_db_pic.png)
+
 **How to get the database by psql**
 ```bash
 docker compose exec db psql -U postgres -d tasks
@@ -188,7 +189,6 @@ The SQLite database can be opened in **DB Browser for SQLite** to inspect the `t
 
 *Database screenshot: `tasks.db` opened in DB Browser for SQLite.*
 
-> If your screenshot has a different filename, change `task_pic.png` above to match the actual file name in the repository.
 
 ## Swagger UI Documentation
 
