@@ -42,7 +42,7 @@ This Task API provides a simple interface for managing tasks. Each task has an I
 - **Uvicorn** - ASGI server
 - **SQLite** - Lightweight persistent database
 
-## Database
+## Database with SQLite(OLD)
 
 SQLite was chosen because it is a lightweight database that:
 
@@ -52,14 +52,9 @@ SQLite was chosen because it is a lightweight database that:
 
 The database file is `tasks.db`. It is created automatically by the application when needed. The file is usually added to `.gitignore`, so each clone of the project starts with a fresh database instead of sharing another developer's local data.
 
-### Example SQL Query
+## Database
+`docker compose up --build`
 
-One example query from Stage 4:
-
-```sql
--- Replace this with the exact SQL query you actually ran in Stage 4.
-SELECT * FROM tasks;
-```
 
 ## Installation
 
@@ -72,38 +67,23 @@ SELECT * FROM tasks;
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/yourusername/task-api.git
-cd task-api
+git clone https://github.com/MiaBurhan/first-CRUD-API.git
+cd first-CRUD-API
 ```
 
-2. **Create a virtual environment** (optional but recommended)
-```bash
-python -m venv .venv
+2. **Copy the env file**
 ```
-```bash
-For linux:  
-source .venv/bin/activate  
-For Windows:  
-.venv\Scripts\activate
-```
-
-3. **Install dependencies**
-```bash
-pip install fastapi uvicorn
-```
-```bash
-python -m pip install Flask
+cp .env.example .env
 ```
 
 ## Running the Application
 
 ### Start the Project
+```
+docker compose up --build
+```
 
 Run this command from the project directory:
-
-```bash
-uvicorn main:app --reload --port 8000
-```
 
 The server will start at: `http://localhost:8000`
 
@@ -114,125 +94,93 @@ The server will start at: `http://localhost:8000`
 
 ## API Endpoints
 
-| Method | Endpoint | Description | Status Codes |
-|--------|----------|-------------|--------------|
-| GET | `/` | Get API information | 200 OK |
-| GET | `/health` | Check API health status | 200 OK |
-| GET | `/tasks` | Retrieve all tasks | 200 OK |
-| POST | `/tasks` | Create a new task | 201 Created |
-| PUT | `/tasks/{task_id}` | Update a task by ID | 200 OK |
-| DELETE | `/tasks/{task_id}` | Delete a task by ID | 204 No Content |
+| Method | Endpoint | Description | Request Body | Success Response |
+|--------|----------|--------------|----------------|-------------------|
+| GET | `/tasks` | Get all tasks | — | `200 OK` — array of tasks |
+| GET | `/tasks/{id}` | Get a single task by id | — | `200 OK` — task object |
+| POST | `/tasks` | Create a new task | `{"title": "string", "done": false}` | `201 Created` (or `200`) — created task with `id` |
+| PUT | `/tasks/{id}` | Update an existing task | `{"title": "string", "done": true}` | `200 OK` — updated task |
+| DELETE | `/tasks/{id}` | Delete a task by id | — | `200 OK` / `204 No Content` |
 
-## Request/Response Examples
+# All CRUD operations commands
+## Create (POST)
 
-### 1. Get API Information
-
-**Request:**
-```http
-GET /
+**bash:**
+```bash
+curl -i -X POST http://localhost:8000/tasks \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Test task","done":false}'
 ```
 
-**Response:**
-```json
-{
-  "name": "Task API",
-  "version": "1.0",
-  "endpoints": ["/tasks"]
-}
+**cmd:**
+```cmd
+curl -i -X POST http://localhost:8000/tasks -H "Content-Type: application/json" -d "{\"title\":\"Test task\",\"done\":false}"
 ```
 
-### 2. Health Check
+## Read all (GET)
 
-**Request:**
-```http
-GET /health
+**bash:**
+```bash
+curl -i http://localhost:8000/tasks
 ```
 
-**Response:**
-```json
-{
-  "status": "ok"
-}
+**cmd:**
+```cmd
+curl -i http://localhost:8000/tasks
 ```
 
-### 3. Get All Tasks
+## Read one (GET by id)
 
-**Request:**
-```http
-GET /tasks
+**bash:**
+```bash
+curl -i http://localhost:8000/tasks/1
 ```
 
-**Response:**
-```json
-[
-  {
-    "id": 1,
-    "title": "Learn FastAPI",
-    "done": false
-  },
-  {
-    "id": 2,
-    "title": "Build a CRUD API",
-    "done": true
-  }
-]
+**cmd:**
+```cmd
+curl -i http://localhost:8000/tasks/1
 ```
 
-### 4. Create a Task
+## Update (PUT)
 
-**Request:**
-```http
-POST /tasks
-Content-Type: application/json
-
-{
-  "title": "Write documentation"
-}
+**bash:**
+```bash
+curl -i -X PUT http://localhost:8000/tasks/1 \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Updated task","done":true}'
 ```
 
-**Response (201 Created):**
-```json
-{
-  "id": 3,
-  "title": "Write documentation",
-  "done": false
-}
+**cmd:**
+```cmd
+curl -i -X PUT http://localhost:8000/tasks/1 -H "Content-Type: application/json" -d "{\"title\":\"Updated task\",\"done\":true}"
 ```
 
-### 5. Update a Task
+## Delete
 
-**Request:**
-```http
-PUT /tasks/3
-Content-Type: application/json
-
-{
-  "title": "Write comprehensive documentation",
-  "done": true
-}
+**bash:**
+```bash
+curl -i -X DELETE http://localhost:8000/tasks/1
 ```
 
-**Response (200 OK):**
-```json
-{
-  "id": 3,
-  "title": "Write comprehensive documentation",
-  "done": true
-}
+**cmd:**
+```cmd
+curl -i -X DELETE http://localhost:8000/tasks/1
 ```
 
-**Note:** You can update only the title, only the status, or both. The request body cannot be empty.
-
-### 6. Delete a Task
-
-**Request:**
-```http
-DELETE /tasks/3
+Replace `1` with whatever real id you're testing against — always check with **GET all** first to confirm it exists.
+## New Database example by psql
+![alt text](psql_db_pic-1.png)
+**How to get the database by psql**
+```bash
+docker compose exec db psql -U postgres -d tasks
+```
+**Then Write**
+```
+\dt
+SELECT * FROM tasks;
 ```
 
-**Response:** `204 No Content` (no response body)
-
-## Database in DB Browser for SQLite
+## Database in DB Browser for SQLite(OLD)
 
 The SQLite database can be opened in **DB Browser for SQLite** to inspect the `tasks.db` file and its tables.
 
@@ -301,33 +249,18 @@ FastAPI automatically generates interactive API documentation. To test the API:
 ## Project Structure
 
 ```
-task-api/
+first-CRUD-API/
 ├── main.py             # This file handles web stuff
+├── models.py           # Just shapes/definitions
+├── psql_db_pic.png     # Database pic taken by psql
 ├── README.md           # Documentation
+├── requirements.txt    # It contain all the dependencies
+├── storage.py          # Place that touches the actual data
 ├── Swagger_UI.png      # Swagger UI screenshot
 ├── task_pic.png        # SQLite database screenshot
-├── tasks.db            # SQLite database file (usually git-ignored)
-├── storage.py          # Place that touches the actual data
-├── models.py           # Just shapes/definitions
+
+
 ```
-
-## Future Improvements
-
-- User authentication
-- Task filtering and sorting
-- Due dates and priorities
-- Pagination support
-- Unit tests
-
-## Contributing
-
-Contributions are welcome! Please follow these steps:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
 
 ## License  
 
