@@ -62,6 +62,8 @@ The database file is `tasks.db`. It is created automatically by the application 
 
 - Python 3.7 or higher
 - pip (Python package manager)
+- Docker for windows [Click here to install](https://docs.docker.com/desktop/setup/install/windows-install/)
+- Docker for Linux [Click here to install](https://docs.docker.com/engine/install/ubuntu/)
 
 ### Steps
 
@@ -75,6 +77,19 @@ cd first-CRUD-API
 ```
 cp .env.example .env
 ```
+### After that do everything in a Virtual environment
+**In your cmd or bash write**
+```
+python -m venv .venv
+```
+**then wirte**  
+For Windows : `.venv\Scripts\activate.bat`  
+For linux or Mac : `source .venv/bin/activate`  
+**If you get something like this in your cmd or bash**
+```
+(.venv) root@green-HP-Pro3500-Series:/home/green/Documents/Flyrank/Week 2/Build_your_first_CRUD_API#
+```
+**Then you are doing write**
 
 ## Running the Application
 
@@ -91,6 +106,21 @@ The server will start at: `http://localhost:8000`
 - **Base URL**: `http://localhost:8000`
 - **Interactive API Docs**: `http://localhost:8000/docs`
 - **Alternative API Docs**: `http://localhost:8000/redoc`
+
+## If it fails try doing 
+```
+docker compose down -v
+```
+**Try changing this line in `compose.yaml` file**
+```python
+volumes:
+      - taskdata:/var/lib/postgresql/data
+```
+**To**
+```python
+volumes:
+      - taskdata:/var/lib/postgresql
+```
 
 ## API Endpoints
 

@@ -15,7 +15,7 @@ services:
       POSTGRES_PASSWORD: dev
       POSTGRES_DB: tasks
     volumes:
-      - taskdata:/var/lib/postgresql/data
+      - taskdata:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d tasks"]
       interval: 5s
