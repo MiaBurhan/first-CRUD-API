@@ -42,19 +42,6 @@ This Task API provides a simple interface for managing tasks. Each task has an I
 - **Uvicorn** - ASGI server
 - **SQLite** - Lightweight persistent database
 
-## Database with SQLite(OLD)
-
-SQLite was chosen because it is a lightweight database that:
-
-- Uses a single database file
-- Requires zero separate database-server setup
-- Persists data across server restarts
-
-The database file is `tasks.db`. It is created automatically by the application when needed. The file is usually added to `.gitignore`, so each clone of the project starts with a fresh database instead of sharing another developer's local data.
-
-## Database
-`docker compose up --build`
-
 
 ## Installation
 
@@ -89,7 +76,7 @@ For linux or Mac : `source .venv/bin/activate`
 ```
 (.venv) root@green-HP-Pro3500-Series:/home/green/Documents/Flyrank/Week 2/Build_your_first_CRUD_API#
 ```
-**Then you are doing write**
+*Then you are doing write*
 
 ## Running the Application
 
@@ -102,25 +89,13 @@ Run this command from the project directory:
 
 The server will start at: `http://localhost:8000`
 
+> If you get permission denied error go to this [section](#️-step-by-step-fix)
+
 ### Access the API
 - **Base URL**: `http://localhost:8000`
 - **Interactive API Docs**: `http://localhost:8000/docs`
 - **Alternative API Docs**: `http://localhost:8000/redoc`
 
-## If it fails try doing 
-```
-docker compose down -v
-```
-**Try changing this line in `compose.yaml` file**
-```python
-volumes:
-      - taskdata:/var/lib/postgresql/data
-```
-**To**
-```python
-volumes:
-      - taskdata:/var/lib/postgresql
-```
 
 ## API Endpoints
 
@@ -198,26 +173,21 @@ curl -i -X DELETE http://localhost:8000/tasks/1
 ```
 
 Replace `1` with whatever real id you're testing against — always check with **GET all** first to confirm it exists.
-## New Database example by psql
-![psql](psql_db_pic.png)
 
 **How to get the database by psql**
+Type in this in the project directory
 ```bash
 docker compose exec db psql -U postgres -d tasks
 ```
 **Then Write**
 ```
 \dt
+```
+```
 SELECT * FROM tasks;
 ```
-
-## Database in DB Browser for SQLite(OLD)
-
-The SQLite database can be opened in **DB Browser for SQLite** to inspect the `tasks.db` file and its tables.
-
-![Database open in DB Browser for SQLite](task_pic.png)
-
-*Database screenshot: `tasks.db` opened in DB Browser for SQLite.*
+## Database example
+![psql](psql_db_pic.png)
 
 
 ## Swagger UI Documentation
@@ -276,10 +246,18 @@ FastAPI automatically generates interactive API documentation. To test the API:
 6. Click "Execute" to send the request
 7. View the response directly in the browser
 
+## Stop the Server 
+
+```
+docker compose down
+```
+
 ## Project Structure
 
 ```
 first-CRUD-API/
+├── compose.yaml
+├── Dockerfile
 ├── main.py             # This file handles web stuff
 ├── models.py           # Just shapes/definitions
 ├── psql_db_pic.png     # Database pic taken by psql
@@ -295,3 +273,34 @@ first-CRUD-API/
 ## License  
 
 This project is open source 
+
+## If you get permission denied while using the docker
+
+### 🛠️ Step-by-Step Fix
+
+#### 1. Create the Docker group (if it doesn't exist)
+Most package managers create this automatically during installation, but you can ensure it exists by running:
+```bash
+sudo groupadd docker
+```
+
+#### 2. Add your user to the Docker group
+Append your current user (`$USER`) to the `docker` group using the `usermod` command:
+```bash
+sudo usermod -aG docker $USER
+```
+⚠️ *Note: Make sure to include the `-a` flag so you append the group rather than replacing your user's existing groups.*
+
+#### 3. Activate the group changes
+Linux only evaluates group membership changes when a new session starts. You can apply these changes immediately to your current terminal session by running:
+```bash
+newgrp docker
+```
+Alternatively, you can fully log out of your system (or disconnect your SSH session) and log back in to apply the changes system-wide.
+
+#### 4. Verify the fix
+Test that your user can now interact with the Docker API without root privileges:
+```bash
+docker ps
+```
+
